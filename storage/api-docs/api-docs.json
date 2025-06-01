@@ -1,0 +1,2134 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "PubWIFIprot API",
+        "description": "API documentation for the PubWIFIprot backend.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000",
+            "description": "Local Development Server"
+        },
+        {
+            "url": "https://api.pubwifiprot.com",
+            "description": "Production Server"
+        }
+    ],
+    "paths": {
+        "/api/admin/dashboard": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get admin dashboard statistics",
+                "operationId": "a4e953abeda97cdeaa1c2af786aea1f3",
+                "responses": {
+                    "200": {
+                        "description": "Dashboard statistics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "users": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "active_today": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "new_this_week": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "networks": {
+                                            "properties": {
+                                                "total_reported": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "pending_review": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "confirmed_malicious": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "domains": {
+                                            "properties": {
+                                                "total_malicious": {
+                                                    "type": "integer",
+                                                    "example": 200
+                                                },
+                                                "blocked_today": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "new_this_week": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "sessions": {
+                                            "properties": {
+                                                "active": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                },
+                                                "total_today": {
+                                                    "type": "integer",
+                                                    "example": 150
+                                                },
+                                                "average_duration": {
+                                                    "type": "integer",
+                                                    "example": 45
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "recent_activity": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "new_user",
+                                                            "network_report",
+                                                            "malicious_domain",
+                                                            "session_start"
+                                                        ]
+                                                    },
+                                                    "description": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "operationId": "c7bb21a0d87049e161b8e4c9b0d909f2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User registered successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login user and create token",
+                "operationId": "dd51a484b7fa0f97c7680fdbde14cf5f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User logged in successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User logged in successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout user (Revoke the token)",
+                "operationId": "df9bdc6c7a6d9f20b983526b2ec0f698",
+                "responses": {
+                    "200": {
+                        "description": "User logged out successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "nullable": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User logged out successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/user": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get the authenticated User",
+                "operationId": "015ae3b99f0678ec8fe0a02409751660",
+                "responses": {
+                    "200": {
+                        "description": "User retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User retrieved successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/devices": {
+            "get": {
+                "tags": [
+                    "Devices"
+                ],
+                "summary": "Get all devices for the authenticated user",
+                "operationId": "a75d9e7e123258c1e54a0c79e9e2caff",
+                "responses": {
+                    "200": {
+                        "description": "List of devices",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "user_id": {
+                                                "type": "integer"
+                                            },
+                                            "device_type": {
+                                                "type": "string"
+                                            },
+                                            "os_version": {
+                                                "type": "string"
+                                            },
+                                            "app_version": {
+                                                "type": "string"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Devices"
+                ],
+                "summary": "Register a new device",
+                "operationId": "6274e6101f84d18fb00e2cda281342f4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "device_type",
+                                    "os_version",
+                                    "app_version"
+                                ],
+                                "properties": {
+                                    "device_type": {
+                                        "type": "string",
+                                        "example": "iPhone"
+                                    },
+                                    "os_version": {
+                                        "type": "string",
+                                        "example": "iOS 15.0"
+                                    },
+                                    "app_version": {
+                                        "type": "string",
+                                        "example": "1.0.0"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Device registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Device registered successfully"
+                                        },
+                                        "device": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/devices/{device}": {
+            "get": {
+                "tags": [
+                    "Devices"
+                ],
+                "summary": "Get device details",
+                "operationId": "c100417d6c6dab5e571cd3ab19e93cc3",
+                "parameters": [
+                    {
+                        "name": "device",
+                        "in": "path",
+                        "description": "Device ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Device details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "user_id": {
+                                            "type": "integer"
+                                        },
+                                        "device_type": {
+                                            "type": "string"
+                                        },
+                                        "os_version": {
+                                            "type": "string"
+                                        },
+                                        "app_version": {
+                                            "type": "string"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Device not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Devices"
+                ],
+                "summary": "Update device information",
+                "operationId": "728071d33b595cf4e265f2f83aa296f9",
+                "parameters": [
+                    {
+                        "name": "device",
+                        "in": "path",
+                        "description": "Device ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "device_type": {
+                                        "type": "string",
+                                        "example": "iPhone"
+                                    },
+                                    "os_version": {
+                                        "type": "string",
+                                        "example": "iOS 15.1"
+                                    },
+                                    "app_version": {
+                                        "type": "string",
+                                        "example": "1.0.1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Device updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Device updated successfully"
+                                        },
+                                        "device": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Devices"
+                ],
+                "summary": "Delete a device",
+                "operationId": "dff9b4abf58be56dc96b4e28fffc4850",
+                "parameters": [
+                    {
+                        "name": "device",
+                        "in": "path",
+                        "description": "Device ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Device deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Device deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/dns/check": {
+            "post": {
+                "tags": [
+                    "DNS & Domain Reputation"
+                ],
+                "summary": "Check if a domain is safe",
+                "operationId": "6d8c13f19084664da4ec681edbb2712a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "domain"
+                                ],
+                                "properties": {
+                                    "domain": {
+                                        "type": "string",
+                                        "example": "example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Domain safety check result",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "is_safe": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "reputation_score": {
+                                            "type": "integer",
+                                            "example": 85
+                                        },
+                                        "threat_level": {
+                                            "type": "string",
+                                            "enum": [
+                                                "low",
+                                                "medium",
+                                                "high"
+                                            ]
+                                        },
+                                        "categories": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "last_checked": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/dns/history": {
+            "get": {
+                "tags": [
+                    "DNS & Domain Reputation"
+                ],
+                "summary": "Get domain check history for the authenticated user",
+                "operationId": "0b82f04cd7701fe8c4a77f40373f90b8",
+                "responses": {
+                    "200": {
+                        "description": "List of domain checks",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "domain": {
+                                                "type": "string"
+                                            },
+                                            "is_safe": {
+                                                "type": "boolean"
+                                            },
+                                            "reputation_score": {
+                                                "type": "integer"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/domains/malicious": {
+            "get": {
+                "tags": [
+                    "DNS & Domain Reputation"
+                ],
+                "summary": "Get list of malicious domains (Admin only)",
+                "operationId": "11ab05015ba07e99d3caedb0d58cdbcb",
+                "responses": {
+                    "200": {
+                        "description": "List of malicious domains",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "domain": {
+                                                "type": "string"
+                                            },
+                                            "threat_level": {
+                                                "type": "string"
+                                            },
+                                            "categories": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "added_by": {
+                                                "type": "integer"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "DNS & Domain Reputation"
+                ],
+                "summary": "Add a malicious domain (Admin only)",
+                "operationId": "a560f7245a8a0763b5d88f912898456d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "domain",
+                                    "threat_level",
+                                    "categories"
+                                ],
+                                "properties": {
+                                    "domain": {
+                                        "type": "string",
+                                        "example": "malicious-site.com"
+                                    },
+                                    "threat_level": {
+                                        "type": "string",
+                                        "enum": [
+                                            "low",
+                                            "medium",
+                                            "high"
+                                        ]
+                                    },
+                                    "categories": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "notes": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Malicious domain added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Malicious domain added successfully"
+                                        },
+                                        "domain": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/domains/malicious/{domain}": {
+            "delete": {
+                "tags": [
+                    "DNS & Domain Reputation"
+                ],
+                "summary": "Remove a malicious domain (Admin only)",
+                "operationId": "b0cf74edeb544c334696be6ea2163000",
+                "parameters": [
+                    {
+                        "name": "domain",
+                        "in": "path",
+                        "description": "Domain ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Malicious domain removed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Malicious domain removed successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/networks/analyze": {
+            "post": {
+                "tags": [
+                    "Networks"
+                ],
+                "summary": "Analyze list of networks from mobile device",
+                "operationId": "e6e5bc38e7b71798b2cc7cddfeb90aba",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "ssid": {
+                                            "type": "string",
+                                            "example": "CoffeeShop_WiFi"
+                                        },
+                                        "bssid": {
+                                            "type": "string",
+                                            "example": "00:11:22:33:44:55"
+                                        },
+                                        "signal_strength": {
+                                            "type": "integer",
+                                            "example": -65
+                                        },
+                                        "encryption_type": {
+                                            "type": "string",
+                                            "example": "WPA2"
+                                        },
+                                        "channel": {
+                                            "type": "integer",
+                                            "example": 6
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Analysis of networks",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "ssid": {
+                                                "type": "string",
+                                                "example": "CoffeeShop_WiFi"
+                                            },
+                                            "bssid": {
+                                                "type": "string",
+                                                "example": "00:11:22:33:44:55"
+                                            },
+                                            "signal_strength": {
+                                                "type": "integer",
+                                                "example": -65
+                                            },
+                                            "encryption_type": {
+                                                "type": "string",
+                                                "example": "WPA2"
+                                            },
+                                            "channel": {
+                                                "type": "integer",
+                                                "example": 6
+                                            },
+                                            "is_trusted": {
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "is_suspicious": {
+                                                "type": "boolean",
+                                                "example": false
+                                            },
+                                            "trust_score": {
+                                                "type": "integer",
+                                                "example": 85
+                                            },
+                                            "warnings": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/networks/check": {
+            "post": {
+                "tags": [
+                    "Networks"
+                ],
+                "summary": "Check if a specific network is safe",
+                "operationId": "1b7f7c4827478f860145abbd670e24ec",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "ssid": {
+                                        "type": "string",
+                                        "example": "CoffeeShop_WiFi"
+                                    },
+                                    "bssid": {
+                                        "type": "string",
+                                        "example": "00:11:22:33:44:55"
+                                    },
+                                    "signal_strength": {
+                                        "type": "integer",
+                                        "example": -65
+                                    },
+                                    "encryption_type": {
+                                        "type": "string",
+                                        "example": "WPA2"
+                                    },
+                                    "channel": {
+                                        "type": "integer",
+                                        "example": 6
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Network safety check result",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "is_safe": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "trust_score": {
+                                            "type": "integer",
+                                            "example": 85
+                                        },
+                                        "warnings": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "is_trusted": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "is_suspicious": {
+                                            "type": "boolean",
+                                            "example": false
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/networks/report": {
+            "post": {
+                "tags": [
+                    "Network Reports"
+                ],
+                "summary": "Analyze a suspicious network",
+                "operationId": "7c8914cf460145ebdbf470d678792518",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ssid",
+                                    "bssid",
+                                    "reason"
+                                ],
+                                "properties": {
+                                    "ssid": {
+                                        "type": "string",
+                                        "example": "Suspicious_WiFi"
+                                    },
+                                    "bssid": {
+                                        "type": "string",
+                                        "example": "00:11:22:33:44:55"
+                                    },
+                                    "encryption_type": {
+                                        "type": "string",
+                                        "example": "WPA2"
+                                    },
+                                    "signal_strength": {
+                                        "type": "integer",
+                                        "example": -65
+                                    },
+                                    "reason": {
+                                        "type": "string",
+                                        "example": "Network appears to be spoofing a legitimate business network"
+                                    },
+                                    "additional_info": {
+                                        "type": "string",
+                                        "example": "Network appeared suddenly and has very strong signal"
+                                    },
+                                    "device_id": {
+                                        "type": "string",
+                                        "example": "device123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Network analysis completed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "analysis": {
+                                            "properties": {
+                                                "is_trusted": {
+                                                    "type": "boolean"
+                                                },
+                                                "is_suspicious": {
+                                                    "type": "boolean"
+                                                },
+                                                "trust_score": {
+                                                    "type": "integer"
+                                                },
+                                                "warnings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "recommendation": {
+                                                    "type": "string",
+                                                    "example": "Avoid connecting to this network due to suspicious characteristics"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too many requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Too many requests. Please try again later."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sessions/start": {
+            "post": {
+                "tags": [
+                    "Sessions"
+                ],
+                "summary": "Start a new session",
+                "operationId": "eaca49322cdf04b3f77755b3f7de3586",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "device_id",
+                                    "network_ssid",
+                                    "network_bssid"
+                                ],
+                                "properties": {
+                                    "device_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "network_ssid": {
+                                        "type": "string",
+                                        "example": "CoffeeShop_WiFi"
+                                    },
+                                    "network_bssid": {
+                                        "type": "string",
+                                        "example": "00:11:22:33:44:55"
+                                    },
+                                    "location": {
+                                        "properties": {
+                                            "latitude": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 40.7128
+                                            },
+                                            "longitude": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": -74.006
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Session started successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Session started successfully"
+                                        },
+                                        "session": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/sessions/end": {
+            "post": {
+                "tags": [
+                    "Sessions"
+                ],
+                "summary": "End an active session",
+                "operationId": "35e59eae6c26c1e101da01d9a6fc209e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "session_id"
+                                ],
+                                "properties": {
+                                    "session_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "summary": {
+                                        "properties": {
+                                            "total_dns_requests": {
+                                                "type": "integer",
+                                                "example": 150
+                                            },
+                                            "blocked_domains": {
+                                                "type": "integer",
+                                                "example": 3
+                                            },
+                                            "network_changes": {
+                                                "type": "integer",
+                                                "example": 1
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Session ended successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Session ended successfully"
+                                        },
+                                        "session": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/sessions/update": {
+            "post": {
+                "tags": [
+                    "Sessions"
+                ],
+                "summary": "Update an active session with new activity",
+                "operationId": "00fbde8e30c71dce8e3ca864e087648f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "session_id",
+                                    "activity"
+                                ],
+                                "properties": {
+                                    "session_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "activity": {
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "dns_request",
+                                                    "network_change",
+                                                    "blocked_domain"
+                                                ]
+                                            },
+                                            "details": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Session activity updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Session activity updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/sessions/history": {
+            "get": {
+                "tags": [
+                    "Sessions"
+                ],
+                "summary": "Get session history for the authenticated user",
+                "operationId": "737608475502b91715d0421835c98a28",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of user sessions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "device_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "network_ssid": {
+                                                        "type": "string"
+                                                    },
+                                                    "network_bssid": {
+                                                        "type": "string"
+                                                    },
+                                                    "location": {
+                                                        "type": "object"
+                                                    },
+                                                    "started_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "ended_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    },
+                                                    "summary": {
+                                                        "type": "object",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/vpn/connect": {
+            "post": {
+                "tags": [
+                    "VPN"
+                ],
+                "summary": "Connect to VPN",
+                "description": "Establishes a VPN connection for the authenticated user",
+                "operationId": "7156e9f4e01aa2fea24f6bc4a0afb1ca",
+                "responses": {
+                    "200": {
+                        "description": "VPN connection established successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "server_address": {
+                                                    "type": "string",
+                                                    "example": "vpn.pubwifi.com"
+                                                },
+                                                "server_port": {
+                                                    "type": "integer",
+                                                    "example": 1194
+                                                },
+                                                "encryption_key": {
+                                                    "type": "string",
+                                                    "example": "base64-encoded-key"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to establish VPN connection"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/vpn/disconnect": {
+            "post": {
+                "tags": [
+                    "VPN"
+                ],
+                "summary": "Disconnect from VPN",
+                "description": "Terminates the active VPN connection for the authenticated user",
+                "operationId": "4112bc65f742497cbe98df7fabe7ea2c",
+                "responses": {
+                    "200": {
+                        "description": "VPN disconnected successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "VPN disconnected successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to disconnect VPN"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/vpn/stats": {
+            "post": {
+                "tags": [
+                    "VPN"
+                ],
+                "summary": "Update VPN statistics",
+                "description": "Updates the statistics for the active VPN session of the authenticated user",
+                "operationId": "4df05c4d3bd1e3ad468aa46a6af49938",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "bytes_sent",
+                                    "bytes_received"
+                                ],
+                                "properties": {
+                                    "bytes_sent": {
+                                        "type": "integer",
+                                        "example": 1024
+                                    },
+                                    "bytes_received": {
+                                        "type": "integer",
+                                        "example": 2048
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Stats updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Stats updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "bytes_sent": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "bytes_received": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to update stats"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/vpn/status": {
+            "get": {
+                "tags": [
+                    "VPN"
+                ],
+                "summary": "Get VPN session status",
+                "description": "Retrieves the current status of the VPN session for the authenticated user",
+                "operationId": "2d62485083cc3e88062a0f1da563fe4b",
+                "responses": {
+                    "200": {
+                        "description": "VPN session status retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "active"
+                                                },
+                                                "connected_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "disconnected_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "nullable": true
+                                                },
+                                                "bytes_sent": {
+                                                    "type": "integer",
+                                                    "example": 1024
+                                                },
+                                                "bytes_received": {
+                                                    "type": "integer",
+                                                    "example": 2048
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to get VPN status"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Device": {
+                "title": "Device",
+                "description": "Device model",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "device_type": {
+                        "type": "string",
+                        "enum": [
+                            "mobile",
+                            "tablet",
+                            "laptop"
+                        ],
+                        "example": "mobile"
+                    },
+                    "os_type": {
+                        "type": "string",
+                        "enum": [
+                            "ios",
+                            "android",
+                            "windows",
+                            "macos"
+                        ],
+                        "example": "android"
+                    },
+                    "os_version": {
+                        "type": "string",
+                        "example": "13.0"
+                    },
+                    "app_version": {
+                        "type": "string",
+                        "example": "1.0.0"
+                    },
+                    "device_identifier": {
+                        "type": "string",
+                        "example": "unique-device-id-123"
+                    },
+                    "device_name": {
+                        "type": "string",
+                        "example": "John's iPhone",
+                        "nullable": true
+                    },
+                    "last_active_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "title": "User",
+                "description": "User model",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john@example.com"
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "WifiNetwork": {
+                "title": "WifiNetwork",
+                "description": "WiFi Network model",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "ssid": {
+                        "type": "string",
+                        "example": "Coffee Shop WiFi"
+                    },
+                    "bssid": {
+                        "type": "string",
+                        "example": "00:11:22:33:44:55"
+                    },
+                    "encryption_type": {
+                        "type": "string",
+                        "example": "WPA2",
+                        "nullable": true
+                    },
+                    "channel": {
+                        "type": "string",
+                        "example": "6",
+                        "nullable": true
+                    },
+                    "signal_strength": {
+                        "type": "integer",
+                        "example": "-65",
+                        "nullable": true
+                    },
+                    "is_trusted": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "is_flagged": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "report_count": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "last_seen_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "responses": {
+            "UnauthorizedError": {
+                "description": "Invalid or missing token",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "Unauthenticated."
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "ValidationError": {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "The given data was invalid."
+                                },
+                                "errors": {
+                                    "properties": {
+                                        "field": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "The field is required."
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Enter your JWT token in the format: Bearer <token>",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Admin",
+            "description": "API Endpoints for admin dashboard functionality"
+        },
+        {
+            "name": "Devices",
+            "description": "API Endpoints for managing user devices"
+        },
+        {
+            "name": "DNS & Domain Reputation",
+            "description": "API Endpoints for domain reputation checks and malicious domain management"
+        },
+        {
+            "name": "Networks",
+            "description": "API Endpoints for managing and checking WiFi networks"
+        },
+        {
+            "name": "Network Reports",
+            "description": "API Endpoints for analyzing suspicious networks"
+        },
+        {
+            "name": "Sessions",
+            "description": "API Endpoints for managing user session activity"
+        },
+        {
+            "name": "VPN",
+            "description": "VPN connection management endpoints"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        }
+    ],
+    "externalDocs": {
+        "description": "Find out more about PubWIFIprot",
+        "url": "https://pubwifiprot.com/docs"
+    }
+}
